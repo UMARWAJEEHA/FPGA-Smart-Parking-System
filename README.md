@@ -56,17 +56,14 @@ This structured design approach ensures reliability and deterministic control fl
 ## 🏗 Hardware & Simulation Gallery
 
 ### 🔹 RTL View
-![RTL View](docs/rtl.png)
+![RTL View](docs/RTL.pdf)
 
 ### 🔹 FSM State Transition Diagram
 ![FSM Diagram](docs/FSM.jpeg)
 
-### 🔹 ISim Waveform – Vehicle Arrival
-![Waveform1](docs/VIEW-RESULThtml.html)
 
-
-### 🔹 ISim Waveform – RFID Identification
-![Waveform2](docs/waveform_identification.png)
+### 🔹 FSM Algorithum
+![FSM Diagram](docs/aLGORITHUM-FIMITE-STATE-MECHINE.jpeg)
 
 ---
 

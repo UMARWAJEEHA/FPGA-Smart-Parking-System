@@ -59,7 +59,7 @@ This structured design approach ensures reliability and deterministic control fl
 ![RTL View](docs/rtl.png)
 
 ### 🔹 FSM State Transition Diagram
-![FSM Diagram](docs/fsm.png)
+![FSM Diagram](docs/FSM.jpeg)
 
 ### 🔹 ISim Waveform – Vehicle Arrival
 ![Waveform1](docs/VIEW-RESULThtml.html)

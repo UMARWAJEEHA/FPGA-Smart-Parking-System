@@ -62,7 +62,8 @@ This structured design approach ensures reliability and deterministic control fl
 ![FSM Diagram](docs/fsm.png)
 
 ### 🔹 ISim Waveform – Vehicle Arrival
-![Waveform1](docs/waveform_arrival.png)
+![Waveform1](docs/VIEW-RESULThtml.html)
+
 
 ### 🔹 ISim Waveform – RFID Identification
 ![Waveform2](docs/waveform_identification.png)

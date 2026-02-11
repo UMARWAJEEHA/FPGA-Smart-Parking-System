@@ -109,3 +109,6 @@ Download the full PowerPoint presentation here:
 [View PPT]
 https://docs.google.com/presentation/d/1JvyinaMvLk1TPMsPpXOavcKaj_DhbBsD/edit?slide=id.p13#slide=id.p13
 
+
+📊 View full paper Online:  
+https://drive.google.com/drive/u/0/home

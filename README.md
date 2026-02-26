@@ -1,3 +1,27 @@
+# FPGA Smart Parking System
+
+A high-speed parking management system implemented on FPGA using Verilog HDL. This project detects vehicles, manages slot availability, and controls gate logic using finite state machines.
+
+Key Features / Highlights
+
+Detects vehicle arrival at entrance and exit
+
+Uses FSM logic for parking slot allocation
+
+Provides deterministic high-speed hardware processing
+
+Designed for FPGA boards (e.g., Spartan-3E)
+
+This gives visitors an idea of the core capabilities.
+
+## Requirements
+
+- FPGA Board: Xilinx Spartan-3E
+- HDL: Verilog
+- Tools: Xilinx ISE/ISim
+- RFID module (optional)
+
+
 # Optimized Design of a Parking Management System Using FPGA
 
 ## 📘 Published Research (ICoST 2015)

@@ -1,0 +1,229 @@
+ This is research-level code
+ UART + FSM integration is strong
+ Good for FPGA, VLSI, Embedded Systems portfolios
+
+
+
+
+
+Overall Big Picture (What this design does)
+
+This design combines two systems:
+
+🅰 Smart Parking Controller (FSM)
+
+Uses IR sensors (ir0–ir3)
+
+Controls traffic lights
+
+Controls parking slots
+
+Drives a motor (gate open / close)
+
+🅱 UART Receiver (RS-232)
+
+Receives 40-bit serial data
+
+Stores it in receive_data
+
+Uses UART FSM (start bit, data bits, stop bit)
+
+Uses received data to make decisions in parking FSM
+
+So in short:
+
+UART data + IR sensors → FSM → lights, parking status, motor control
+
+2️⃣ Module main — The Real Hardware Design
+🔹 Inputs & Outputs
+Inputs
+reset, clk                  // system reset & clock
+ir0, ir1, ir2, ir3           // IR sensors
+sw_0, sw_limit               // limit switches (gate control)
+id                           // ID input (unused mostly)
+RS232_DCE_RXD                // UART RX line
+Outputs
+RS232_DCE_TXD                // UART TX (loopback)
+receive_data[39:0]           // received UART data
+orng, red, green, yellow     // traffic lights
+park_lot[2:0]                // parking slot availability
+motor_cw, motor_ccw          // gate motor direction
+
+📌 Loopback
+
+assign RS232_DCE_TXD = RS232_DCE_RXD;
+
+Whatever comes in RX goes out TX.
+
+3️⃣ UART Receiver Section (Very Important)
+⏱ Timing Parameters
+parameter rcv_bit_per = 2604;
+parameter half_rcv_bit_per = 1302;
+
+These define baud rate timing (based on clock frequency).
+
+UART FSM States
+ready → start_bit → data_bits → stop_bit
+
+This is a standard UART FSM.
+
+UART Registers
+rcv_sr           // shift register (40-bit)
+counter          // baud timing counter
+data_bit_count   // number of bits received
+p_state          // present UART state
+n_state          // next UART state
+UART FSM Logic
+always @(p_state, RS232_DCE_RXD, counter, data_bit_count)
+🔸 ready
+
+Waits for RX line to go LOW (start bit)
+
+🔸 start_bit
+
+Waits half bit time
+
+Confirms valid start bit
+
+🔸 data_bits
+n_rcv_sr <= {RS232_DCE_RXD, rcv_sr[39:1]};
+
+Shifts incoming bits into a 40-bit register
+
+After 40 bits → go to stop bit
+
+🔸 stop_bit
+
+Waits one bit time
+
+Returns to ready
+
+UART Register Update
+always @(posedge clk)
+
+This block updates:
+
+UART state
+
+Shift register
+
+Counters
+
+4️⃣ Parking System FSM (Main Logic)
+FSM States
+STATE_S0 → STATE_S8
+
+This FSM controls:
+
+Lights
+
+Parking slots
+
+Gate motor
+
+🔹 Important Signals
+Space Calculation
+assign space = (ir1 + ir2 + ir3);
+
+If space == 0 → parking available
+
+If space == 1 → parking full
+
+🔹 State Transitions (Simplified Meaning)
+🟢 STATE_S0 – Idle / Reset
+
+All lights ON
+
+Gate stopped
+
+Parking slots free
+
+🟡 STATE_S1 – Check UART Data
+if (receive_data == 93872914) → STATE_S2
+if (receive_data == 93872915) → STATE_S3
+
+➡ UART decides what action to take
+
+🔴 STATE_S2 – Stop / Red Signal
+
+Red ON
+
+Gate stopped
+
+🚦 STATE_S3 – Check Parking Space
+if (space == 0) → STATE_S4
+else → STATE_S5
+🟢 STATE_S4 – Space Available
+
+Yellow ON
+
+Parking slot LEDs reflect IR sensors
+
+🚫 STATE_S5 – Parking Full
+
+Green OFF
+
+No entry allowed
+
+⚙ STATE_S6 – Gate Opening
+motor_cw = 0;
+motor_ccw = 1;
+⛔ STATE_S7 – Gate Stop
+
+Motor OFF
+
+🔄 STATE_S8 – Gate Closing
+motor_cw = 1;
+motor_ccw = 0;
+5️⃣ Output Logic (Lights, Parking, Motor)
+always @(state)
+
+This block:
+
+Turns lights ON/OFF
+
+Updates parking slots
+
+Controls motor direction
+
+📌 Example:
+
+park_lot[0] <= ir1;
+park_lot[1] <= ir2;
+park_lot[2] <= ir3;
+
+Each IR sensor shows slot occupied/free.
+
+6️⃣ Module test2 — Testbench (Simulation Only)
+
+This part is NOT synthesized.
+
+What it does:
+
+Generates clock
+
+Applies reset
+
+Simulates IR sensors
+
+Sends UART serial bits manually
+
+Tests gate movement
+
+Clock Generator
+always #10 clk <= ~clk;
+
+Creates a clock for simulation.
+
+UART Simulation
+
+All these:
+
+#52090 RS232_DCE_RXD = 0;
+#52090 RS232_DCE_RXD = 1;
+
+Manually send UART bits bit-by-bit.
+
+7️⃣ How This Looks in a Paper (One-Line Summary)
+
+“The system integrates a 40-bit UART receiver with a finite state machine-based smart parking controller. Received serial data determines system states, while IR sensors dynamically monitor parking availability and control traffic lights and gate motors.”
